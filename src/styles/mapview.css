@@ -1,0 +1,37 @@
+.map-container {
+    margin-top: 1rem;
+    border: 2px solid #2c3e50;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    background: #f9f9f9;
+    padding: 1rem;
+  }
+  
+  .map-container h3 {
+    font-size: 1.4rem;
+    color: #2c3e50;
+    margin-bottom: 0.8rem;
+    text-align: center;
+  }
+  
+  /* Leaflet map sizing */
+  .leaflet-container {
+    width: 100% !important;
+    height: 400px !important;
+    border-radius: 6px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .map-container {
+      padding: 0.5rem;
+      border: none;
+      box-shadow: none;
+    }
+  
+    .leaflet-container {
+      height: 300px !important;
+    }
+  }
+  

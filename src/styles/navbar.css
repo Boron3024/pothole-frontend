@@ -1,0 +1,80 @@
+.nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #333;
+}
+
+.logo img {
+  height: 75px;
+  width: auto;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-links a:hover {
+  color: #f0a500; /* Slight hover effect for better UX */
+}
+
+.menu-toggle {
+  display: none;
+  background: none;
+  color: white;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+/* WhatsApp Link Styling */
+.whatsapp-link {
+  display: flex;
+  align-items: center;
+  color: #25d366;
+  font-size: 1.5rem; /* Bigger for better visibility */
+  transition: color 0.3s ease-in-out;
+}
+
+.whatsapp-link:hover {
+  color: #128c7e;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    background: #333;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    width: 200px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: block;
+  }
+
+  .whatsapp-link {
+    font-size: 1.8rem; /* Slightly bigger on mobile */
+  }
+}

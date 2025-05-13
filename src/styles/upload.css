@@ -1,0 +1,173 @@
+/* 🌐 Background (optional, won't affect layout) */
+body {
+  background: linear-gradient(to right, #f0f2f5, #e0e7ff);
+}
+
+/* 📦 Container */
+.upload-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* 🧾 Headings & Text */
+.upload-container h1 {
+  font-size: 2rem;
+  color: #333;
+}
+
+.upload-container p {
+  font-size: 1.1rem;
+  color: #555;
+}
+
+/* 🗂 Drag-and-Drop Box */
+.upload-box {
+  border: 2px dashed #00bcd4;
+  padding: 30px;
+  border-radius: 10px;
+  margin: 20px 0;
+  cursor: pointer;
+  background-color: #f8f8f8;
+}
+
+.upload-box:hover {
+  background-color: #e0f7fa;
+}
+
+/* 📤 Upload Button (Alt) */
+.upload-btn {
+  display: inline-block;
+  margin-top: 10px;
+  background-color: #00bcd4;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background-color: #008ba3;
+}
+
+/* 📄 File Preview */
+.file-preview {
+  background: #eef;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+/* 🖼 Image Preview */
+.image-preview {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* 🔘 Submit Button */
+.upload-submit {
+  margin: 0.5rem 0;
+  padding: 0.6rem 1.2rem;
+  background-color: #2c3e50;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.upload-submit:hover {
+  background-color: #1abc9c;
+  transition: 0.3s;
+}
+
+/* ✅ Upload Status */
+.upload-status {
+  margin-top: 0.8rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+.upload-status.success {
+  color: #27ae60;
+}
+.upload-status.error {
+  color: #e74c3c;
+}
+
+/* 🌀 Loading Spinner */
+.loader {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #2c3e50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 📊 Progress Bar (optional) */
+.progress-bar {
+  width: 100%;
+  max-width: 400px;
+  height: 10px;
+  background: #ccc;
+  border-radius: 5px;
+  margin: 10px auto;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #00c853;
+  transition: width 0.3s ease-in-out;
+}
+
+/* 🖼 Detected Result Image */
+.detected-image {
+  margin-top: 1rem;
+  max-width: 100%;
+  border-radius: 10px;
+  border: 2px solid #ccc;
+}
+
+/* 📥 Download Link */
+.download-link {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #27ae60;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+}
+
+/* 📱 Mobile Responsive */
+@media (max-width: 480px) {
+  .upload-container {
+    padding: 1rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .upload-submit,
+  .download-link {
+    width: 100%;
+    font-size: 1rem;
+  }
+
+  .image-preview img,
+  .detected-image {
+    max-width: 100%;
+    height: auto;
+  }
+}

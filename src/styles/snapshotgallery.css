@@ -1,0 +1,113 @@
+.snapshot-gallery {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .snapshot-gallery h2 {
+    text-align: center;
+    margin-bottom: 1.2rem;
+    color: #2c3e50;
+  }
+  
+  .snapshot-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+  }
+  
+  .snapshot-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .snapshot-img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+  
+  .download-link {
+    display: inline-block;
+    background: #00bcd4;
+    color: white;
+    padding: 6px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  
+  .download-link:hover {
+    background: #0097a7;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    border-bottom: 2px solid #00bcd4;
+    display: inline-block;
+    padding-bottom: 0.3rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .snapshot-img {
+    width: 100%;
+    height: auto;
+    border-radius: 6px;
+    object-fit: cover;
+    margin-bottom: 10px;
+  }
+  
+  .snapshot-img:hover {
+    transform: scale(1.05);
+  }
+
+  .snapshot-card:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    transform: scale(1.03);
+  }
+
+  .gallery-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+  }
+
+  .search-bar {
+    padding: 8px 12px;
+    width: 100%;
+    max-width: 300px;
+    font-size: 1rem;
+    margin: 1rem auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .pagination {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .pagination button {
+    background: #eee;
+    border: none;
+    margin: 0 5px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .pagination button.active {
+    background: #00bcd4;
+    color: white;
+    font-weight: bold;
+  }
+  
