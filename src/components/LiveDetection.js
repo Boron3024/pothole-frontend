@@ -59,7 +59,7 @@ const LiveDetection = () => {
 
         setIsLoading(true);
         try {
-          const response = await fetch("http://127.0.0.1:8000/detect_pothole/", {
+          const response = await fetch("${process.env.REACT_APP_API_URL}/detect_pothole/", {
             method: "POST",
             body: formData,
           });
@@ -95,7 +95,7 @@ const LiveDetection = () => {
             const timestamp = new Date().toISOString();
             const snapshotForm = new FormData();
             snapshotForm.append("image", blob, `snapshot_${timestamp}.jpg`);
-            await fetch("http://127.0.0.1:8000/save_snapshot/", {
+            await fetch("${process.env.REACT_APP_API_URL}/save_snapshot/", {
               method: "POST",
               body: snapshotForm,
             });
