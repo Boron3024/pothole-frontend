@@ -13,11 +13,14 @@ const LiveDetection = () => {
   const [detectedImagePath, setDetectedImagePath] = useState("");
   const [excelReport, setExcelReport] = useState("");
   const [enableTimedSnapshots, setEnableTimedSnapshots] = useState(false);
+  const [facingMode, setFacingMode] = useState("environment"); // 👈 New state
   const detectionIntervalRef = useRef(null);
 
   const startDetection = async () => {
     try {
-      const userStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      const userStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode }
+      });
       if (videoRef.current) {
         videoRef.current.srcObject = userStream;
         setStream(userStream);
@@ -41,6 +44,17 @@ const LiveDetection = () => {
     }
   };
 
+  const toggleCamera = async () => {
+    const newMode = facingMode === "user" ? "environment" : "user";
+    setFacingMode(newMode);
+    if (isStreaming) {
+      stopDetection();
+      setTimeout(() => {
+        startDetection();
+      }, 300); // short delay for smoother switching
+    }
+  };
+
   const detectFrame = async () => {
     if (!videoRef.current || videoRef.current.readyState !== 4) return;
 
@@ -50,12 +64,10 @@ const LiveDetection = () => {
 
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
-
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(async (blob) => {
       if (!blob) return;
-
       const formData = new FormData();
       formData.append("image", blob, "frame.jpg");
 
@@ -65,15 +77,10 @@ const LiveDetection = () => {
           method: "POST",
           body: formData,
         });
-
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const result = await response.json();
-        let count = 0;
 
-        // Clear previous overlays
+        let count = 0;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
@@ -165,6 +172,9 @@ const LiveDetection = () => {
         </button>
         <button className="stop-btn" onClick={stopDetection} disabled={!isStreaming}>
           Stop Detection
+        </button>
+        <button className="switch-btn" onClick={toggleCamera}>
+          🔄 Switch Camera
         </button>
       </div>
 
