@@ -13,10 +13,11 @@ const LiveDetection = () => {
   const [detectedImagePath, setDetectedImagePath] = useState("");
   const [excelReport, setExcelReport] = useState("");
   const [enableTimedSnapshots, setEnableTimedSnapshots] = useState(false);
+  const detectionIntervalRef = useRef(null);
 
   const startDetection = async () => {
     try {
-      const userStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      const userStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
       if (videoRef.current) {
         videoRef.current.srcObject = userStream;
         setStream(userStream);
@@ -34,85 +35,95 @@ const LiveDetection = () => {
       stream.getTracks().forEach(track => track.stop());
       setIsStreaming(false);
       setStatus("Stopped");
+      clearInterval(detectionIntervalRef.current);
       const ctx = canvasRef.current?.getContext("2d");
       ctx?.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     }
   };
 
-  useEffect(() => {
-    if (!isStreaming) return;
+  const detectFrame = async () => {
+    if (!videoRef.current || videoRef.current.readyState !== 4) return;
 
+    const video = videoRef.current;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    const video = videoRef.current;
 
-    const detectFrame = async () => {
-      if (!video || video.readyState !== 4) return;
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob(async (blob) => {
-        const formData = new FormData();
-        formData.append("image", blob, "frame.jpg");
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
 
-        setIsLoading(true);
-        try {
-          const response = await fetch("${process.env.REACT_APP_API_URL}/detect_pothole/", {
-            method: "POST",
-            body: formData,
-          });
+      const formData = new FormData();
+      formData.append("image", blob, "frame.jpg");
 
-          const result = await response.json();
-          let count = 0;
-          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      setIsLoading(true);
+      try {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/detect_pothole/`, {
+          method: "POST",
+          body: formData,
+        });
 
-          if (Array.isArray(result.potholes)) {
-            for (const p of result.potholes) {
-              if (p.confidence >= threshold && p.x2 > p.x1 && p.y2 > p.y1) {
-                ctx.strokeStyle = "red";
-                ctx.lineWidth = 2;
-                ctx.strokeRect(p.x1, p.y1, p.x2 - p.x1, p.y2 - p.y1);
-                ctx.fillStyle = "red";
-                ctx.font = "14px Arial";
-                ctx.fillText(`${p.severity} (${(p.confidence * 100).toFixed(1)}%)`, p.x1, Math.max(p.y1 - 8, 10));
-                count++;
-              }
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
+        const result = await response.json();
+        let count = 0;
+
+        // Clear previous overlays
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        if (Array.isArray(result.potholes)) {
+          for (const p of result.potholes) {
+            if (p.confidence >= threshold && p.x2 > p.x1 && p.y2 > p.y1) {
+              ctx.strokeStyle = "red";
+              ctx.lineWidth = 2;
+              ctx.strokeRect(p.x1, p.y1, p.x2 - p.x1, p.y2 - p.y1);
+              ctx.fillStyle = "red";
+              ctx.font = "14px Arial";
+              ctx.fillText(`${p.severity} (${(p.confidence * 100).toFixed(1)}%)`, p.x1, Math.max(p.y1 - 8, 10));
+              count++;
             }
           }
-
-          setDetectedImagePath(result.image_path || "");
-          setExcelReport(result.excel_report || "");
-          setStatus(count > 0 ? `${count} pothole(s) detected` : "No potholes detected");
-
-          if (result.image_path) {
-            setSnapshotHistory((prev) => [...prev, result.image_path]);
-          }
-
-          // Optional: save snapshot to backend if toggle enabled
-          if (enableTimedSnapshots) {
-            const timestamp = new Date().toISOString();
-            const snapshotForm = new FormData();
-            snapshotForm.append("image", blob, `snapshot_${timestamp}.jpg`);
-            await fetch("${process.env.REACT_APP_API_URL}/save_snapshot/", {
-              method: "POST",
-              body: snapshotForm,
-            });
-          }
-
-        } catch (err) {
-          console.error("Detection failed:", err);
-          setStatus("Detection failed");
-        } finally {
-          setIsLoading(false);
         }
-      }, "image/jpeg");
 
-      setTimeout(detectFrame, 3000); // run every 3 seconds
-    };
+        setDetectedImagePath(result.image_path || "");
+        setExcelReport(result.excel_report || "");
+        setStatus(count > 0 ? `${count} pothole(s) detected` : "No potholes detected");
 
-    detectFrame();
+        if (result.image_path) {
+          setSnapshotHistory((prev) => [...prev, result.image_path]);
+        }
+
+        if (enableTimedSnapshots) {
+          const timestamp = new Date().toISOString();
+          const snapshotForm = new FormData();
+          snapshotForm.append("image", blob, `snapshot_${timestamp}.jpg`);
+          await fetch(`${process.env.REACT_APP_API_URL}/save_snapshot/`, {
+            method: "POST",
+            body: snapshotForm,
+          });
+        }
+      } catch (err) {
+        console.error("Detection failed:", err);
+        setStatus("Detection failed");
+      } finally {
+        setIsLoading(false);
+      }
+    }, "image/jpeg");
+  };
+
+  useEffect(() => {
+    if (isStreaming) {
+      detectionIntervalRef.current = setInterval(detectFrame, 3000);
+    } else {
+      clearInterval(detectionIntervalRef.current);
+    }
+    return () => clearInterval(detectionIntervalRef.current);
   }, [isStreaming, threshold, enableTimedSnapshots]);
 
   return (
@@ -120,9 +131,9 @@ const LiveDetection = () => {
       <h2>Live Pothole Detection</h2>
       <p>Status: {status}</p>
 
-      <div className="video-container">
-        <video ref={videoRef} autoPlay playsInline className="video-stream" />
-        <canvas ref={canvasRef} className="canvas-overlay" />
+      <div className="video-container" style={{ position: "relative", display: "inline-block" }}>
+        <video ref={videoRef} autoPlay playsInline muted className="video-stream" />
+        <canvas ref={canvasRef} className="canvas-overlay" style={{ position: "absolute", top: 0, left: 0 }} />
         {isLoading && <div className="loading-overlay">Detecting...</div>}
       </div>
 
