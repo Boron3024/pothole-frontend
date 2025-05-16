@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import "../styles/livedetection.css";
 
 const LiveDetection = () => {
@@ -13,7 +13,7 @@ const LiveDetection = () => {
   const [detectedImagePath, setDetectedImagePath] = useState("");
   const [excelReport, setExcelReport] = useState("");
   const [enableTimedSnapshots, setEnableTimedSnapshots] = useState(false);
-  const [facingMode, setFacingMode] = useState("environment"); // 👈 New state
+  const [facingMode, setFacingMode] = useState("environment");
   const detectionIntervalRef = useRef(null);
 
   const startDetection = async () => {
@@ -35,7 +35,7 @@ const LiveDetection = () => {
 
   const stopDetection = () => {
     if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+      stream.getTracks().forEach((track) => track.stop());
       setIsStreaming(false);
       setStatus("Stopped");
       clearInterval(detectionIntervalRef.current);
@@ -51,11 +51,11 @@ const LiveDetection = () => {
       stopDetection();
       setTimeout(() => {
         startDetection();
-      }, 300); // short delay for smoother switching
+      }, 300);
     }
   };
 
-  const detectFrame = async () => {
+  const detectFrame = useCallback(async () => {
     if (!videoRef.current || videoRef.current.readyState !== 4) return;
 
     const video = videoRef.current;
@@ -68,6 +68,7 @@ const LiveDetection = () => {
 
     canvas.toBlob(async (blob) => {
       if (!blob) return;
+
       const formData = new FormData();
       formData.append("image", blob, "frame.jpg");
 
@@ -77,6 +78,7 @@ const LiveDetection = () => {
           method: "POST",
           body: formData,
         });
+
         if (!response.ok) throw new Error(`Server error: ${response.status}`);
         const result = await response.json();
 
@@ -122,7 +124,7 @@ const LiveDetection = () => {
         setIsLoading(false);
       }
     }, "image/jpeg");
-  };
+  }, [threshold, enableTimedSnapshots]);
 
   useEffect(() => {
     if (isStreaming) {
@@ -131,7 +133,7 @@ const LiveDetection = () => {
       clearInterval(detectionIntervalRef.current);
     }
     return () => clearInterval(detectionIntervalRef.current);
-  }, [isStreaming, threshold, enableTimedSnapshots]);
+  }, [isStreaming, detectFrame]);
 
   return (
     <div className="live-detection">
@@ -173,7 +175,7 @@ const LiveDetection = () => {
         <button className="stop-btn" onClick={stopDetection} disabled={!isStreaming}>
           Stop Detection
         </button>
-        <button className="switch-btn" onClick={toggleCamera}>
+        <button className="start-btn" onClick={toggleCamera}>
           🔄 Switch Camera
         </button>
       </div>

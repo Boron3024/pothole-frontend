@@ -12,7 +12,7 @@ const SnapshotGallery = () => {
   useEffect(() => {
     const fetchSnapshots = async () => {
       try {
-        const response = await fetch("${process.env.REACT_APP_API_URL}/snapshots/");
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/snapshots/`);
         const data = await response.json();
         setSnapshots(data);
       } catch (err) {
@@ -36,7 +36,7 @@ const SnapshotGallery = () => {
       <div className="gallery-header">
         <h2 className="section-title">📂 Snapshot Archive</h2>
         <a
-          href="${process.env.REACT_APP_API_URL}/snapshots/zip"
+          href={`${process.env.REACT_APP_API_URL}/snapshots/zip`}
           className="download-link"
           target="_blank"
           rel="noopener noreferrer"

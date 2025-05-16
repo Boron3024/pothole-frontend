@@ -7,7 +7,7 @@ const Dashboard = () => {
   const [potholes, setPotholes] = useState([]);
 
   useEffect(() => {
-    fetch("${process.env.REACT_APP_API_URL}/potholes/")
+    fetch(`${process.env.REACT_APP_API_URL}/potholes/`)
       .then((res) => res.json())
       .then((data) => setPotholes(data))
       .catch(console.error);
