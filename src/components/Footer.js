@@ -40,7 +40,9 @@ const Footer = () => {
           <div className="footer-section contact">
             <h2>Contact Us</h2>
             <p><FaEnvelope /> support@pothole-detection.com</p>
-            <p>📞 +254 714 684 508</p>
+            <p>📞 +254 798 248 942</p>
+            <p>📞 +254 700 066 769</p>
+            <p>📞 +254 798 550 870</p>
             <p>📍 <a href="https://goo.gl/maps/" target="_blank" rel="noopener noreferrer">View on Google Maps</a></p>
 
             {/* Social Media Icons */}

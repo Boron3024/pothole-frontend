@@ -25,7 +25,7 @@ const Navbar = () => {
 
           {/* WhatsApp Contact */}
           <a
-            href="https://wa.me/254798248942, 254700066769, 25498550870" // Replace with actual WhatsApp number
+            href="https://wa.me/254798248942" // Replace with actual WhatsApp number
             target="_blank"
             rel="noopener noreferrer"
             className="whatsapp-link"
