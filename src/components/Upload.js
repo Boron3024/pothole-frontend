@@ -1,7 +1,4 @@
-from pathlib import Path
-
-# Define the updated Upload.js content
-upload_js_code = """
+// src/components/Upload.js
 import React, { useState } from "react";
 import "../styles/upload.css";
 import axiosClient from "../axios";
@@ -25,7 +22,6 @@ const Upload = () => {
     }
 
     setUploadStatus("⏳ Uploading...");
-
     const allResults = [];
 
     for (const file of selectedFiles) {
@@ -106,10 +102,3 @@ const Upload = () => {
 };
 
 export default Upload;
-"""
-
-# Write the code to a file
-output_path = Path("/mnt/data/Upload.js")
-output_path.write_text(upload_js_code)
-
-output_path.name
